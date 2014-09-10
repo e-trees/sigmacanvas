@@ -18,7 +18,8 @@ object XML2Dot {
     val buf = new StringWriter
     val writer = new PrintWriter(buf)
     
-    writer.println("digraph " + file.replaceAll("\\.", "_") + " {")
+    //writer.println("digraph " + file.replaceAll("\\.", "_") + " {")
+    writer.println("digraph design{")
     
     for(item <- xml \ "item"){
     	val key = (item \ "@id")(0).text

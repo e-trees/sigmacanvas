@@ -7,6 +7,7 @@ object SigmaCanvasViewer {
   def main(args:Array[String]):Unit = {
     val src = XML2Dot.load(args(0))
     val pane = new SigmaCanvasGraphPane("/opt/local/bin/dot")
+    println(src)
     pane.view(new ByteArrayInputStream(src.getBytes()))
   }
   

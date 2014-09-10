@@ -23,11 +23,15 @@
   
   <item id="v" class="sigmacanvas.tools.Simple2DViewer">
   </item>
+  
+  <item id="v0" class="sigmacanvas.tools.HexDump">
+  </item>
 
   <connect src="r" dest="c0"/>
   <connect src="c0" dest="c1"/>
   <connect src="c0" dest="c2"/>
   <connect src="c1" dest="v"/>
   <connect src="c2" dest="v"/>
+  <connect src="r" dest="v0"/>
 
 </sigmacanvas>
