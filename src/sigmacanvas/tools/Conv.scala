@@ -10,14 +10,29 @@ import sigmacanvas.utils.SysUtils
 class ConvByteToShort extends SigmaCanvasItem{
   
   private var source:Seq[Byte] = _
-  private val destination:Array[Short] = new Array[Short](128) 
+  private var destination:Array[Short] = _
+  private var offset:Int = 0
+  private var size:Int = 512
   
+  params.put("size", 512.toString)
+  params.put("offset", 0.toString)
+    
   def init():Unit = {
+    size = params.get("size") match{
+      case Some(v) => v.toInt
+      case _ => 512
+    }
+    destination = new Array[Short](size)
+    
+    offset = params.get("offset") match{
+      case Some(v) => v.toInt
+      case _ => 0
+    }
   }
   
   def run():Unit = {
     if(source == null) return
-    for(i <- 0 until 128; j = 2 * i + 8){
+    for(i <- 0 until size; j = 2 * i + offset){
       destination(i) = PacketUtils.ntohs(source, j)
     }
   }

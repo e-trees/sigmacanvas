@@ -7,6 +7,8 @@
   </item>
   
   <item id="c0" class="sigmacanvas.tools.ConvByteToShort">
+    <parameter key="size" value="128"/>
+    <parameter key="offset" value="8"/>
   </item>
   
   <item id="c1" class="sigmacanvas.tools.ConvAnyValueToDouble">
