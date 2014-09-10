@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sigmacanvas>
+
+  <item id="r" class="sigmacanvas.tools.UDPReceiver">
+    <parameter key="bufsize" value="2048"/>
+    <parameter key="port" value="16384"/>
+  </item>
+  
+  <item id="c0" class="sigmacanvas.tools.ConvByteToShort">
+  </item>
+  
+  <item id="c1" class="sigmacanvas.tools.ConvAnyValueToDouble">
+    <parameter key="conv" value="(d:AnyVal) => ((d.asInstanceOf[Short].toDouble / 4096.0) * 2.048) / 220.0 * 1000.0 / 0.6"/>
+    <parameter key="cond" value="(i:Int) => i % 2 == 0"/>
+  </item>
+  
+  <item id="c2" class="sigmacanvas.tools.ConvAnyValueToDouble">
+    <parameter key="conv" value="(d:AnyVal) => ((d.asInstanceOf[Short].toDouble / 4096.0) * 2.048) * 3 / 6"/>
+    <parameter key="cond" value="(i:Int) => i % 2 == 1"/>
+  </item>
+  
+  <item id="v" class="sigmacanvas.tools.Simple2DViewer">
+  </item>
+
+  <connect src="r" dest="c0"/>
+  <connect src="c0" dest="c1"/>
+  <connect src="c0" dest="c2"/>
+  <connect src="c1" dest="v"/>
+  <connect src="c2" dest="v"/>
+
+</sigmacanvas>
