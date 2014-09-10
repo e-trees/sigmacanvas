@@ -42,6 +42,41 @@ class ConvByteToShort extends SigmaCanvasItem{
 
 }
 
+class ConvByteToInt extends SigmaCanvasItem{
+  
+  private var source:Seq[Byte] = _
+  private var destination:Array[Int] = _
+  private var offset:Int = 0
+  private var size:Int = 256
+  
+  params.put("size", size.toString)
+  params.put("offset", offset.toString)
+    
+  def init():Unit = {
+    size = params.get("size") match{
+      case Some(v) => v.toInt
+      case _ => size
+    }
+    destination = new Array[Int](size)
+    
+    offset = params.get("offset") match{
+      case Some(v) => v.toInt
+      case _ => offset
+    }
+  }
+  
+  def run():Unit = {
+    if(source == null) return
+    for(i <- 0 until size; j = 4 * i + offset){
+      destination(i) = PacketUtils.ntoh(source, j)
+    }
+  }
+
+  def setSource(s:Seq[AnyVal]) = {source = s.asInstanceOf[Seq[Byte]]}
+  def getDestination():Seq[AnyVal] = destination
+
+}
+
 class ConvAnyValueToDouble extends SigmaCanvasItem{
   
   private var source:Seq[AnyVal] = _
@@ -49,8 +84,9 @@ class ConvAnyValueToDouble extends SigmaCanvasItem{
   
   private var conv:AnyVal=>Double = _
   private var cond:Int=>Boolean = _
+  private var bufsize:Int = 600
   
-  private var init_done = false
+  params.put("bufsize", bufsize.toString)
   
   def setSource(s:Seq[AnyVal]) = {source = s}
   
@@ -66,7 +102,10 @@ class ConvAnyValueToDouble extends SigmaCanvasItem{
       case Some(s) => cond = SysUtils.apply[(Int => Boolean)](s) 
       case _ => cond = null
     }
-    init_done = true
+    bufsize = params.get("bufsize") match{
+      case Some(s) => s.toInt
+      case _ => bufsize
+    }
   }
     
   def run():Unit = {
@@ -77,7 +116,7 @@ class ConvAnyValueToDouble extends SigmaCanvasItem{
       if cond(i)
     } destination.enqueue(conv(d))
     
-    while(destination.size > 600) destination.dequeue();
+    while(destination.size > bufsize) destination.dequeue();
   }
     
 }

@@ -14,14 +14,17 @@
   <item id="c1" class="sigmacanvas.tools.ConvAnyValueToDouble">
     <parameter key="conv" value="(d:AnyVal) => ((d.asInstanceOf[Short].toDouble / 4096.0) * 2.048) / 220.0 * 1000.0 / 0.6"/>
     <parameter key="cond" value="(i:Int) => i % 2 == 0"/>
+    <parameter key="bufsize" value="640"/>
   </item>
   
   <item id="c2" class="sigmacanvas.tools.ConvAnyValueToDouble">
     <parameter key="conv" value="(d:AnyVal) => ((d.asInstanceOf[Short].toDouble / 4096.0) * 2.048) * 3 / 6"/>
     <parameter key="cond" value="(i:Int) => i % 2 == 1"/>
+    <parameter key="bufsize" value="640"/>
   </item>
   
   <item id="v" class="sigmacanvas.tools.Simple2DViewer">
+    <parameter key="title" value="IV Meter"/>
   </item>
   
   <item id="v0" class="sigmacanvas.tools.HexDump">

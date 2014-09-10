@@ -12,18 +12,18 @@ import sigmacanvas.base.SigmaCanvasItem
 
 class Simple2DViewer() extends SigmaCanvasItem{
   
-  val frame = new JFrame("Simple2DViewer")
-  val width = 640
-  val height = 480
+  private var frame:JFrame = _
+  
+  private var width = 640
+  private var height = 480
+  private var title = "Simple2DViewer"
+    
+  params.put("width", width.toString)
+  params.put("height", height.toString)
+  params.put("title", title)
   
   val canvas = new GraphCanvas()
-  
-  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-  frame.setSize(width, height)
-  frame.getContentPane().add(canvas)
-  frame.pack()
-  frame.setVisible(true)
-  
+    
   private var source : LinkedList[Seq[Double]] = new LinkedList[Seq[Double]]()
   
   def setSource(s:Seq[AnyVal]):Unit = {
@@ -32,7 +32,30 @@ class Simple2DViewer() extends SigmaCanvasItem{
   
   def getDestination():Seq[AnyVal] = null
 
-  def init():Unit = {}
+  def set_parameters():Unit = {
+    title = params.get("title") match {
+      case Some(s) => s
+      case _ => title
+    }
+    width = params.get("width") match {
+      case Some(v) => v.toInt
+      case _ => width
+    }
+    height = params.get("height") match {
+      case Some(v) => v.toInt
+      case _ => height
+    }
+  }
+  
+  def init():Unit = {
+    set_parameters()    
+    frame = new JFrame(title)
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    frame.setSize(width, height)
+    frame.getContentPane().add(canvas)
+    frame.pack()
+    frame.setVisible(true)
+  }
   
   def run():Unit = {
     canvas.repaint()
