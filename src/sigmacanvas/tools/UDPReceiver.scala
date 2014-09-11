@@ -8,8 +8,8 @@ import sigmacanvas.base.SigmaCanvasMessage
 
 class UDPReceiver() extends SigmaCanvasItem{
   
-  params.put("bufsize", 2048.toString)
-  params.put("port", 0x4000.toString)
+  setParam("bufsize", 2048.toString)
+  setParam("port", 0x4000.toString)
 
   private var sock:DatagramSocket = _
   private var result:Array[Byte] = _
@@ -18,11 +18,11 @@ class UDPReceiver() extends SigmaCanvasItem{
   private var init_done = false
   
   def init():Unit = {
-    val port = params.get("port") match {
+    val port = getParam("port") match {
      case Some(v) => v.toInt
      case _ => 0x4000
     }
-    val bufsize = params.get("bufsize") match {
+    val bufsize = getParam("bufsize") match {
      case Some(v) => v.toInt
      case _ => 1500
     }

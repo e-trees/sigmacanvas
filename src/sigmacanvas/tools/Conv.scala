@@ -16,17 +16,17 @@ class ConvByteToShort extends SigmaCanvasItem{
   private var offset:Int = 0
   private var size:Int = 512
   
-  params.put("size", 512.toString)
-  params.put("offset", 0.toString)
+  setParam("size", 512.toString)
+  setParam("offset", 0.toString)
     
   def init():Unit = {
-    size = params.get("size") match{
+    size = getParam("size") match{
       case Some(v) => v.toInt
       case _ => 512
     }
     result = new Array[Short](size)
     
-    offset = params.get("offset") match{
+    offset = getParam("offset") match{
       case Some(v) => v.toInt
       case _ => 0
     }
@@ -53,17 +53,17 @@ class ConvByteToInt extends SigmaCanvasItem{
   private var offset:Int = 0
   private var size:Int = 256
   
-  params.put("size", size.toString)
-  params.put("offset", offset.toString)
+  setParam("size", size.toString)
+  setParam("offset", offset.toString)
   
   def init():Unit = {
-    size = params.get("size") match{
+    size = getParam("size") match{
       case Some(v) => v.toInt
       case _ => size
     }
     result = new Array[Int](size)
     
-    offset = params.get("offset") match{
+    offset = getParam("offset") match{
       case Some(v) => v.toInt
       case _ => offset
     }
@@ -91,18 +91,18 @@ class ConvAnyValueToDouble extends SigmaCanvasItem{
   private var cond:Int=>Boolean = _
   private var bufsize:Int = 600
   
-  params.put("bufsize", bufsize.toString)
+  setParam("bufsize", bufsize.toString)
 
   def init():Unit = {
-    params.get("conv") match{
+    getParam("conv") match{
       case Some(s) => conv = SysUtils.apply[(AnyVal => Double)](s) 
       case _ => conv = null
     }
-    params.get("cond") match{
+    getParam("cond") match{
       case Some(s) => cond = SysUtils.apply[(Int => Boolean)](s) 
       case _ => cond = null
     }
-    bufsize = params.get("bufsize") match{
+    bufsize = getParam("bufsize") match{
       case Some(s) => s.toInt
       case _ => bufsize
     }

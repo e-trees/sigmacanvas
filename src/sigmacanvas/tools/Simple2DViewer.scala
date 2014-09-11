@@ -20,9 +20,9 @@ class Simple2DViewer() extends SigmaCanvasItem{
   private var height = 480
   private var title = "Simple2DViewer"
     
-  params.put("width", width.toString)
-  params.put("height", height.toString)
-  params.put("title", title)
+  setParam("width", width.toString)
+  setParam("height", height.toString)
+  setParam("title", title)
   
   val canvas = new GraphCanvas()
     
@@ -31,15 +31,15 @@ class Simple2DViewer() extends SigmaCanvasItem{
   def getDestination():Seq[AnyVal] = null
 
   def set_parameters():Unit = {
-    title = params.get("title") match {
+    title = getParam("title") match {
       case Some(s) => s
       case _ => title
     }
-    width = params.get("width") match {
+    width = getParam("width") match {
       case Some(v) => v.toInt
       case _ => width
     }
-    height = params.get("height") match {
+    height = getParam("height") match {
       case Some(v) => v.toInt
       case _ => height
     }

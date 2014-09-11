@@ -1,8 +1,9 @@
 package sigmacanvas.base
 
 import scala.collection.mutable.HashMap
-import akka.actor.Actor
 import scala.collection.mutable.LinkedList
+
+import akka.actor.Actor
 import akka.actor.ActorRef
 
 case object ITEM_INIT
@@ -10,7 +11,7 @@ case object ITEM_WAKEUP
 
 abstract class SigmaCanvasItem extends Actor{
   
-  protected val params = new HashMap[String, String]()
+  private val params = new HashMap[String, String]()
     
   def init():Unit
 
@@ -19,14 +20,16 @@ abstract class SigmaCanvasItem extends Actor{
   def run(m:SigmaCanvasMessage):Unit
   
   def data():Seq[AnyVal]
-  
-  def setParam(k:String, v:String):Unit = params.put(k, v)
-  
+      
   private var destinations = new LinkedList[ActorRef]()
   
   private def add_destinations(a:ActorRef) = {
     destinations = a +: destinations
   }
+  
+  def setParam(k:String, v:String):Unit = params.put(k, v)
+
+  def getParam(k:String):Option[String] = params.get(k)
   
   def forward_to_all(a:Any) = {
     for(d <- destinations){

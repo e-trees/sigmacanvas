@@ -30,7 +30,7 @@ class SendMail extends SigmaCanvasItem{
   private var param_valid = true
   
   def get_parameter(k:String):String = {
-    params.get(k) match {
+    getParam(k) match {
       case Some(s) => return s
       case _ =>
         param_valid = false
