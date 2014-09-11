@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/grappa1_2.jar"/>
 	<classpathentry kind="lib" path="lib/akka-actor_2.11-2.3.6.jar"/>
 	<classpathentry kind="lib" path="lib/config-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
