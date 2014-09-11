@@ -23,7 +23,7 @@ class SigmaCanvasToolbar(base:Base) extends JToolBar{
   } 
   
   add(makeButton("Run", new ActionListener() {
-    	def actionPerformed(e:ActionEvent) { base.run() }
+    	def actionPerformed(e:ActionEvent) { base.wakeup() }
     }))
   
 }

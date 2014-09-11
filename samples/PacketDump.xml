@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sigmacanvas>
+
+  <item id="r" class="sigmacanvas.tools.UDPReceiver">
+    <parameter key="bufsize" value="2048"/>
+    <parameter key="port" value="16384"/>
+  </item>
+  
+  <item id="v0" class="sigmacanvas.tools.HexDump"/>
+
+  <connect src="r" dest="v0"/>
+
+</sigmacanvas>

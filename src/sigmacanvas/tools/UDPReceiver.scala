@@ -2,7 +2,9 @@ package sigmacanvas.tools
 
 import java.net.DatagramPacket
 import java.net.DatagramSocket
+
 import sigmacanvas.base.SigmaCanvasItem
+import sigmacanvas.base.SigmaCanvasMessage
 
 class UDPReceiver() extends SigmaCanvasItem{
   
@@ -10,7 +12,7 @@ class UDPReceiver() extends SigmaCanvasItem{
   params.put("port", 0x4000.toString)
 
   private var sock:DatagramSocket = _
-  private var destination:Array[Byte] = _
+  private var result:Array[Byte] = _
   private var packet:DatagramPacket = _
   
   private var init_done = false
@@ -25,23 +27,26 @@ class UDPReceiver() extends SigmaCanvasItem{
      case _ => 1500
     }
     sock = new DatagramSocket(port)
-    destination = new Array[Byte](bufsize)
-    packet = new DatagramPacket(destination, bufsize)
+    result = new Array[Byte](bufsize)
+    packet = new DatagramPacket(result, bufsize)
     init_done = true
   }
   
-  def run() : Unit = {
-    if(sock != null){
-      sock.receive(packet)
+  def wakeup() : Unit = {
+    while(true) {
+      if(sock != null){
+        sock.receive(packet)
+      }
+      forward_to_all()
     }
   }
+  
+  def run(m:SigmaCanvasMessage) : Unit = {}
+  
+  def data:Seq[AnyVal] = result
   
   def close() : Unit = {
     if(sock != null) sock.close()
   }
-  
-  def setSource(s:Seq[AnyVal]):Unit = {}
-  
-  def getDestination():Seq[AnyVal] = destination 
   
 }

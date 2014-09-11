@@ -2,15 +2,17 @@ package sigmacanvas.tools
 
 import scala.collection.mutable.Queue
 import scala.collection.mutable.SynchronizedQueue
-
 import sigmacanvas.base.SigmaCanvasItem
 import sigmacanvas.utils.PacketUtils
 import sigmacanvas.utils.SysUtils
+import sigmacanvas.ui.SigmaCanvasMainWindow
+import sigmacanvas.base.SigmaCanvasMessage
+import sigmacanvas.base.SigmaCanvasMessage
+import sigmacanvas.base.SigmaCanvasMessage
 
 class ConvByteToShort extends SigmaCanvasItem{
   
-  private var source:Seq[Byte] = _
-  private var destination:Array[Short] = _
+  private var result:Array[Short] = _
   private var offset:Int = 0
   private var size:Int = 512
   
@@ -22,7 +24,7 @@ class ConvByteToShort extends SigmaCanvasItem{
       case Some(v) => v.toInt
       case _ => 512
     }
-    destination = new Array[Short](size)
+    result = new Array[Short](size)
     
     offset = params.get("offset") match{
       case Some(v) => v.toInt
@@ -30,34 +32,36 @@ class ConvByteToShort extends SigmaCanvasItem{
     }
   }
   
-  def run():Unit = {
-    if(source == null) return
+  def wakeup():Unit = {}
+  
+  def run(m:SigmaCanvasMessage):Unit = {
+    val s = m.obj.data
     for(i <- 0 until size; j = 2 * i + offset){
-      destination(i) = PacketUtils.ntohs(source, j)
+    	result(i) = PacketUtils.ntohs(m.obj.data.asInstanceOf[Seq[Byte]], j)
     }
+    forward_to_all()
   }
-
-  def setSource(s:Seq[AnyVal]) = {source = s.asInstanceOf[Seq[Byte]]}
-  def getDestination():Seq[AnyVal] = destination
+  
+  def data:Seq[AnyVal] = result
 
 }
 
 class ConvByteToInt extends SigmaCanvasItem{
   
   private var source:Seq[Byte] = _
-  private var destination:Array[Int] = _
+  private var result:Array[Int] = _
   private var offset:Int = 0
   private var size:Int = 256
   
   params.put("size", size.toString)
   params.put("offset", offset.toString)
-    
+  
   def init():Unit = {
     size = params.get("size") match{
       case Some(v) => v.toInt
       case _ => size
     }
-    destination = new Array[Int](size)
+    result = new Array[Int](size)
     
     offset = params.get("offset") match{
       case Some(v) => v.toInt
@@ -65,34 +69,30 @@ class ConvByteToInt extends SigmaCanvasItem{
     }
   }
   
-  def run():Unit = {
-    if(source == null) return
+  def run(m:SigmaCanvasMessage):Unit = {
+    val a = m.obj.data
     for(i <- 0 until size; j = 4 * i + offset){
-      destination(i) = PacketUtils.ntoh(source, j)
+      result(i) = PacketUtils.ntoh(source, j)
     }
+    forward_to_all()
   }
-
-  def setSource(s:Seq[AnyVal]) = {source = s.asInstanceOf[Seq[Byte]]}
-  def getDestination():Seq[AnyVal] = destination
+  
+  def wakeup():Unit = {}
+  
+  def data():Seq[AnyVal] = result
 
 }
 
 class ConvAnyValueToDouble extends SigmaCanvasItem{
   
-  private var source:Seq[AnyVal] = _
-  private val destination:Queue[Double] = new SynchronizedQueue[Double]()
+  private val result:Queue[Double] = new SynchronizedQueue[Double]()
   
   private var conv:AnyVal=>Double = _
   private var cond:Int=>Boolean = _
   private var bufsize:Int = 600
   
   params.put("bufsize", bufsize.toString)
-  
-  def setSource(s:Seq[AnyVal]) = {source = s}
-  
-  def getDestination():Seq[AnyVal] = destination 
 
-  
   def init():Unit = {
     params.get("conv") match{
       case Some(s) => conv = SysUtils.apply[(AnyVal => Double)](s) 
@@ -108,15 +108,19 @@ class ConvAnyValueToDouble extends SigmaCanvasItem{
     }
   }
     
-  def run():Unit = {
-    if(source == null || conv == null || cond == null) return
-
+  def run(m:SigmaCanvasMessage):Unit = {
+    val a = m.obj.data
+    if(m.obj.data == null || conv == null || cond == null) return
     for{
-      (d, i) <- source.zipWithIndex
-      if cond(i)
-    } destination.enqueue(conv(d))
-    
-    while(destination.size > bufsize) destination.dequeue();
+    	(d, i) <- a.zipWithIndex
+    	if cond(i)
+    } result.enqueue(conv(d))
+    while(result.size > bufsize) result.dequeue();
+    forward_to_all()
   }
-    
+
+  def wakeup():Unit = {}
+  
+  def data:Seq[AnyVal] = result
+
 }

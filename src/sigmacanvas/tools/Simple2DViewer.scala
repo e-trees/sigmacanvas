@@ -9,6 +9,8 @@ import javax.swing.JFrame
 import javax.swing.JPanel
 import sigmacanvas.utils.PacketUtils
 import sigmacanvas.base.SigmaCanvasItem
+import scala.collection.mutable.HashMap
+import sigmacanvas.base.SigmaCanvasMessage
 
 class Simple2DViewer() extends SigmaCanvasItem{
   
@@ -24,11 +26,7 @@ class Simple2DViewer() extends SigmaCanvasItem{
   
   val canvas = new GraphCanvas()
     
-  private var source : LinkedList[Seq[Double]] = new LinkedList[Seq[Double]]()
-  
-  def setSource(s:Seq[AnyVal]):Unit = {
-    source = s.asInstanceOf[Seq[Double]] +: source
-  }
+  private var source : HashMap[String, Seq[Double]] = new HashMap[String, Seq[Double]]()
   
   def getDestination():Seq[AnyVal] = null
 
@@ -56,10 +54,15 @@ class Simple2DViewer() extends SigmaCanvasItem{
     frame.pack()
     frame.setVisible(true)
   }
-  
-  def run():Unit = {
+
+  def run(m:SigmaCanvasMessage):Unit = {
+    source.put(m.obj.id, m.obj.data.asInstanceOf[Seq[Double]])
     canvas.repaint()
   }
+  
+  def wakeup():Unit = {}
+  
+  def data():Seq[AnyVal] = null
   
   class GraphCanvas() extends JPanel {
     
@@ -79,7 +82,7 @@ class Simple2DViewer() extends SigmaCanvasItem{
     }
     
     def paintGraphAll(g:Graphics):Unit = {
-      for((seq, i) <- source.zipWithIndex){
+      for(((k,seq), i) <- source.zipWithIndex){
         if(seq != null){
           val data = for(v <- seq; py = height - v * height) yield(py.toInt)
           val c = colors(i)

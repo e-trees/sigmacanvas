@@ -2,24 +2,23 @@ package sigmacanvas.tools
 
 import sigmacanvas.utils.PacketUtils
 import sigmacanvas.base.SigmaCanvasItem
+import sigmacanvas.base.SigmaCanvasMessage
 
 class HexDump extends SigmaCanvasItem{
   
-  private var source:Seq[Byte] = _
+  def init():Unit = {}
   
-  def init():Unit = {
-  }
-  
-  def run():Unit = {
-    if(source == null) return
-    for((b, i) <- source.zipWithIndex){
-      if(i % 8 == 0) printf("%08x:", i)
-      printf(" %02x", b)
-      if(i % 8 == 7) printf("\n")
+  def run(m:SigmaCanvasMessage):Unit = {
+    val a = m.obj.data
+    for((b, i) <- a.zipWithIndex){
+    	if(i % 8 == 0) printf("%08x:", i)
+    	printf(" %02x", b)
+    	if(i % 8 == 7) printf("\n")
     }
   }
-
-  def setSource(s:Seq[AnyVal]) = {source = s.asInstanceOf[Seq[Byte]]}
-  def getDestination():Seq[AnyVal] = null
+  
+  def data:Seq[AnyVal] = null
+  
+  def wakeup():Unit = {}
 
 }

@@ -1,37 +1,43 @@
 package sigmacanvas.base
 
-import scala.collection.mutable.LinkedList
+import java.io.File
 import scala.collection.mutable.HashMap
 import scala.xml.XML
-import java.io.File
+import akka.actor.ActorRef
+import akka.actor.ActorSystem
+import akka.actor.actorRef2Scala
 import sigmacanvas.utils.SysUtils
+import akka.actor.Props
 
 class Base {
   
-  var modules = new HashMap[String,SigmaCanvasItem]()
+  private var modules = new HashMap[String,ActorRef]()
+  val system = ActorSystem("system")
+  //val actor = sys.actorOf(Props[sigmacanvas.tools.UDPReceiver], "r")
+
 
   def init():Unit = {
-    for((k,m) <- modules) m.init()
+    for((k,m) <- modules) m ! "init"
   }
   
-  def run():Unit = {
-    while(true){
-      for((k,m) <- modules) m.run()
-    }
+  def wakeup():Unit = {
+    for((k,m) <- modules) m ! "wakeup"
   }
-
+  
   def load(file:String) = {
 	val xml = XML.loadFile(new File(file))
     
     for(item <- xml \ "item"){
     	val key = (item \ "@id")(0).text
     	val klass = (item \ "@class")(0).text
-    	val cmd = "new " + klass + "()"
-    	val m = SysUtils.apply[SigmaCanvasItem](cmd)
+    	val cmd = "akka.actor.Props[" + klass + "]"
+    	println(cmd)
+    	val m = system.actorOf(SysUtils.apply[akka.actor.Props](cmd), key)
+    	m ! ("id", key)
     	for(param <- item \ "parameter"){
     	  val k = (param \ "@key")(0).text
     	  val v = (param \ "@value")(0).text
-    	  m.setParam(k, v)
+    	  m ! (k, v)
     	}
     	modules.put(key, m)
     }
@@ -47,7 +53,7 @@ class Base {
         case Some(m) => m
         case _ => null
       }
-      if(src != null && dest != null) dest.setSource(src.getDestination)
+      if(src != null && dest != null) src ! dest
     }
 
   }
@@ -59,7 +65,7 @@ object Base {
   def main(args:Array[String]) = {
     val b = new Base() 
     b.load(args(0))
-    b.run()
+    b.wakeup()
   }
   
 }
