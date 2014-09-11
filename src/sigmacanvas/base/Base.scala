@@ -17,11 +17,11 @@ class Base {
 
 
   def init():Unit = {
-    for((k,m) <- modules) m ! "init"
+    for((k,m) <- modules) m ! ITEM_INIT
   }
   
   def wakeup():Unit = {
-    for((k,m) <- modules) m ! "wakeup"
+    for((k,m) <- modules) m ! ITEM_WAKEUP
   }
   
   def load(file:String) = {
@@ -31,7 +31,6 @@ class Base {
     	val key = (item \ "@id")(0).text
     	val klass = (item \ "@class")(0).text
     	val cmd = "akka.actor.Props[" + klass + "]"
-    	println(cmd)
     	val m = system.actorOf(SysUtils.apply[akka.actor.Props](cmd), key)
     	m ! ("id", key)
     	for(param <- item \ "parameter"){

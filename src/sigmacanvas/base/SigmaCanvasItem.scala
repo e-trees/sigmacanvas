@@ -5,10 +5,13 @@ import akka.actor.Actor
 import scala.collection.mutable.LinkedList
 import akka.actor.ActorRef
 
+case object ITEM_INIT
+case object ITEM_WAKEUP
+
 abstract class SigmaCanvasItem extends Actor{
   
-  protected val params = new HashMap[String, String]() 
-  
+  protected val params = new HashMap[String, String]()
+    
   def init():Unit
 
   def wakeup():Unit
@@ -40,8 +43,8 @@ abstract class SigmaCanvasItem extends Actor{
   
   def receive = {
     case (k:String, v:String) => setParam(k, v)
-    case "init" => init()
-    case "wakeup" => wakeup()
+    case ITEM_INIT => init()
+    case ITEM_WAKEUP => wakeup()
     case a:ActorRef => add_destinations(a)
     case m:SigmaCanvasMessage => run(m)
     case x:Any => println("unknown:" + x)
